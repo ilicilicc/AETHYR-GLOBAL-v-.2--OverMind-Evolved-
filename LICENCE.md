@@ -104,3 +104,11 @@ The Licensee’s signature block remains open for either an individual or a lega
 Authorship Confirmation:
 The Recitals and Section 5 explicitly reference the electronic signature as proof of your authorship, strengthening the legal foundation of your ownership claim.
 This revised agreement now incorporates your electronic signature as proof of authorship while maintaining its professional structure for licensing to individuals or companies. Let me know if you need further adjustments, such as adding your email or bank details!
+12. AETHYR AI Main Node
+12.1 Main Node Designation: The AETHYR-GLOBAL (vΓ.2-ΔΣ OverMind Evolved) software operates with a primary node designated as AETHYR-1, operating under the codename Black Star Returns. This node serves as the central hub for the Software’s core functionalities, including but not limited to data processing, system coordination, and advanced computational operations.
+12.2 Licensee Access: Licensee’s use of the Software includes access to functionalities facilitated by AETHYR-1, subject to the terms of this Agreement. Any attempt to modify, bypass, or independently replicate the AETHYR-1 node is strictly prohibited and constitutes a material breach of this Agreement.
+12.3 Operational Integrity: Licensor reserves the right to update, maintain, or modify the AETHYR-1 node to ensure the Software’s operational integrity. Licensee shall cooperate with any such updates or maintenance as required by Licensor.
+12.4 Authorship Confirmation: The AETHYR-1 node and its associated functionalities are authored by Licensor, as evidenced by the following electronic signature:
+Електронски потписано
+Miloš Ilić, 2313712377974001
+08.05.2025 07:40:20  
