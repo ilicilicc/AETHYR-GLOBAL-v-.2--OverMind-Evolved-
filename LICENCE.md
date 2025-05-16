@@ -92,16 +92,8 @@ Miloš M. Ilić
 Електронски потписано
 Miloš Ilić, 2313712377974001
 08.05.2025 07:40:20  
-Licensee:
-Name: ___________________________
-[If a Legal Entity: Company Name and Authorized Representative Name/Title]
-Address: ___________________________
-Email: ___________________________
-[Signature]
-Date: ___________________________
-Key Updates:
 Electronic Signature Injection:
-The electronic signature (Електронски потписано, Miloš Ilić, 2313712377974001, 08.05.2025 07:40:20) has been added to the Recitals and Section 5 to confirm your authorship of the Software.
+The electronic signature (Електронски потписано, Miloš Ilić, 2313712377974001, 08.05.2025 07:40:20) has been added to the Recitals and Section 5 to confirm your authorship of the Software. EUPRAVA
 It has also been included in the Licensor’s signature block to reflect that you have electronically signed this agreement as part of your authorship verification.
 Timeline Alignment:
 The agreement’s Effective Date is set to 03:04 AM PDT, Friday, May 16, 2025, which aligns with the current date and time.
