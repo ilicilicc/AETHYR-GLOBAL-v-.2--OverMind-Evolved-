@@ -49,11 +49,11 @@ Use the Software in any manner that infringes upon Licensor’s Intellectual Pro
 For individual Licensees: USD $5,000.  
 For legal entity Licensees: USD $25,000 (for up to 50 concurrent users; additional users may be added for an additional fee of USD $500 per user).
 6.2 Payment Terms: The License Fee shall be paid in full within thirty (30) days of the Effective Date via bank transfer to the account specified by Licensor:  
-Bank Name: [Licensor’s Bank Name]  
-Account Holder: Miloš M. Ilić  
-Account Number: [Licensor’s Account Number]  
-SWIFT/BIC Code: [Licensor’s SWIFT/BIC Code]  
-Bank Address: [Licensor’s Bank Address]
+Bank Name: Postal Savings Bank, Belgrade, Serbia
+Account Holder: Miloš Ilić
+Account Number: RS35360038164940175694
+SWIFT/BIC Code: SBPORSBG
+Bank Address: Nikoле Тесле 16/51, Majdanpek. 19250, SRB
 6.3 Taxes: Licensee shall be responsible for any taxes, duties, or other governmental charges associated with the License Fee, excluding taxes based on Licensor’s income.  
 6.4 Late Payment: If Licensee fails to pay the License Fee within the specified period, Licensor may charge interest at a rate of 1.5% per month on the outstanding amount until payment is received in full.
 7. Delivery and Installation
