@@ -189,3 +189,77 @@ AETHYR-GLOBAL is an advanced AI system designed for recursive self-improvement, 
 - Explanations: Detailed insights into system concepts and algorithms.
 
 ## Usage Example
+
+
+----------------------------------------------------
+core = AethyrGlobalCore(node_id="{self.node_id}")
+core.evolve({{"mutation_rate": 0.2}})
+core.test_speed("neural_simulation")
+core.explain("ΔΣ optimization")
+----------------------------------------------------
+
+text
+"""
+        logger.info("Generated README content")
+        return readme
+
+    # --- Private helper methods ---
+
+    def _compute_nth_prime(self, n: int) -> int:
+        """Compute the nth prime number using a simple sieve algorithm."""
+        if n < 1:
+            raise ValueError("n must be >= 1")
+        primes = []
+        candidate = 2
+        while len(primes) < n:
+            if all(candidate % p != 0 for p in primes):
+                primes.append(candidate)
+            candidate += 1
+        logger.debug(f"Computed {n}th prime: {primes[-1]}")
+        return primes[-1]
+
+    def _count_square_free(self, limit: int) -> int:
+        """Count numbers up to limit that are square-free."""
+        def is_square_free(x: int) -> bool:
+            for i in range(2, int(math.sqrt(x)) + 1):
+                if x % (i*i) == 0:
+                    return False
+            return True
+
+        count = sum(1 for num in range(1, limit + 1) if is_square_free(num))
+        logger.debug(f"Counted {count} square-free numbers up to {limit}")
+        return count
+
+    def _multiply_matrices(self, a: List[List[float]], b: List[List[float]]) -> List[List[float]]:
+        """Multiply two matrices."""
+        try:
+            result = np.dot(np.array(a), np.array(b)).tolist()
+            logger.debug(f"Performed matrix multiplication of sizes {len(a)}x{len(a[0])} and {len(b)}x{len(b[0])}")
+            return result
+        except Exception as e:
+            logger.error(f"Matrix multiplication error: {e}")
+            raise
+
+    def _simulate_neural_layer(self, input_vector: List[float]) -> List[float]:
+        """Simulate a neural network layer activation."""
+        weights = np.random.rand(len(input_vector), len(input_vector))
+        bias = np.random.rand(len(input_vector))
+        input_array = np.array(input_vector)
+        activation = np.tanh(np.dot(input_array, weights) + bias)
+        logger.debug("Simulated neural layer activation")
+        return activation.tolist()
+
+    def _assess_risk(self, state: Dict[str, float]) -> float:
+        """
+        Assess risk score of evolved state based on arbitrary criteria.
+        Lower risk means safer evolution.
+        """
+        # Example: risk increases with learning rate and mutation rate
+        risk = state.get("learning_rate", 0) * 0.5 + self.mutation_rate * 0.5
+        logger.debug(f"Assessed risk score: {risk}")
+        return risk
+
+
+if __name__ == "__main__":
+    core = AethyrGlobalCore()
+    print(core.generate_read_me())
