@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AETHYR-GLOBAL (vΓ.2-ΔΣ OverMind Evolved)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/marked@4.0.2/marked.min.js"></script>
+    <script src="https://unpkg.com/monaco-editor@0.33.0/min/vs/loader.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        #code-editor-container, #evolution-container {
+            height: 400px;
+            width: 100%;
+        }
+        .monaco-editor {
+            padding-top: 8px;
+        }
+        .dark .monaco-editor, .dark .monaco-editor .margin {
+            background-color: #1e1e1e;
+        }
+        .dark {
+            color-scheme: dark;
+        }
+        .code-diff-block {
+            border-radius: 0.375rem;
+        }
+        .code-diff-block pre {
+            margin: 0;
+            padding: 0.75rem;
+            overflow-x: auto;
+        }
+        .progress-bar {
+            transition: width 0.5s ease;
+        }
+        @media (max-width: 768px) {
+            #code-editor-container, #evolution-container {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-200">
+    <div class="container mx-auto px-4 py-8">
+        <header class="mb-8">
+            <div class="flex flex-col sm:flex-row justify-between items-center">
+                <div>
+                    <h1 class="text-3xl font-bold text-indigo-600 dark:text-indigo-400">AETHYR-GLOBAL</h1>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">vΓ.2-ΔΣ OverMind Evolved</p>
+                </div>
+                <div class="mt-4 sm:mt-0 flex items-center space-x-4">
+                    <button id="theme-toggle" class="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200">
+                        <i class="fas fa-moon dark:hidden"></i>
+                        <i class="fas fa-sun hidden dark:block"></i>
+                    </button>
+                </div>
+            </div>
+            <p class="mt-4 text-gray-700 dark:text-gray-300">
+                An AI-driven code evolution system inspired by AlphaEvolve. This application simulates how an evolutionary approach combined with LLMs can improve code over multiple generations.
+            </p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Input Section -->
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200">Initial Code</h2>
+                <div id="code-editor-container" class="border border-gray-300 dark:border-gray-600 rounded-md"></div>
+                
+                <div class="mt-6">
+                    <h3 class="text-lg font-medium mb-2 text-gray-800 dark:text-gray-200">Evaluation Criteria</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Primary Optimization Goal</label>
+                            <select id="optimization-goal" class="block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-base">
+                                <option value="performance">Runtime Performance</option>
+                                <option value="memory">Memory Efficiency</option>
+                                <option value="correctness">Correctness & Robustness</option>
+                                <option value="readability">Code Readability</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Secondary Constraints</label>
+                            <div class="space-y-2">
+                                <div class="flex items-center">
+                                    <input id="constraint-size" type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                    <label for="constraint-size" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">Minimize Code Size</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input id="constraint-compatibility" type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                    <label for="constraint-compatibility" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">Maximize Compatibility</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input id="constraint-complexity" type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                    <label for="constraint-complexity" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">Reduce Algorithmic Complexity</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-6">
+                    <button id="start-evolution-btn" class="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Start Code Evolution
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Evolution Visualization Section -->
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200">
+                    Evolution Progress
+                    <span id="generation-counter" class="ml-2 text-sm font-normal text-gray-600 dark:text-gray-400">Generation: 0</span>
+                </h2>
+                
+                <div id="evolution-container" class="border border-gray-300 dark:border-gray-600 rounded-md"></div>
+                
+                <div class="mt-6">
+                    <div class="flex justify-between mb-2">
+                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Evolution Progress</span>
+                        <span id="progress-percentage" class="text-sm font-medium text-gray-700 dark:text-gray-300">0%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+                        <div id="progress-bar" class="bg-indigo-600 h-2.5 rounded-full progress-bar" style="width: 0%"></div>
+                    </div>
+                </div>
+                
+                <div class="mt-6 space-y-4">
+                    <div>
+                        <h3 class="text-lg font-medium mb-2 text-gray-800 dark:text-gray-200">Current Metrics</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-gray-100 dark:bg-gray-700 p-3 rounded-md">
+                                <div class="text-sm text-gray-500 dark:text-gray-400">Performance Score</div>
+                                <div id="performance-score" class="text-xl font-semibold text-gray-800 dark:text-gray-200">0.00</div>
+                            </div>
+                            <div class="bg-gray-100 dark:bg-gray-700 p-3 rounded-md">
+                                <div class="text-sm text-gray-500 dark:text-gray-400">Memory Efficiency</div>
+                                <div id="memory-score" class="text-xl font-semibold text-gray-800 dark:text-gray-200">0.00</div>
+                            </div>
+                            <div class="bg-gray-100 dark:bg-gray-700 p-3 rounded-md">
+                                <div class="text-sm text-gray-500 dark:text-gray-400">Correctness</div>
+                                <div id="correctness-score" class="text-xl font-semibold text-gray-800 dark:text-gray-200">0.00</div>
+                            </div>
+                            <div class="bg-gray-100 dark:bg-gray-700 p-3 rounded-md">
+                                <div class="text-sm text-gray-500 dark:text-gray-400">Readability</div>
+                                <div id="readability-score" class="text-xl font-semibold text-gray-800 dark:text-gray-200">0.00</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Code Evolution History -->
+        <div class="mt-8">
+            <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200">Evolution History</h2>
+            <div id="evolution-history" class="space-y-4"></div>
+        </div>
+        
+        <!-- LLM Analysis -->
+        <div class="mt-8 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200">AI Analysis & Insights</h2>
+            <div id="llm-analysis" class="prose dark:prose-invert max-w-none">
+                <p class="text-gray-700 dark:text-gray-300">Start the evolution process to see AI-generated analysis of code improvements.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            const themeToggle = document.getElementById('theme-toggle');
+            
+            // Check for user preference
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.classList.add('dark');
+            }
+            
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+                if (event.matches) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            });
+            
+            themeToggle.addEventListener('click', () => {
+                document.documentElement.classList.toggle('dark');
+            });
+        });
+
+        // Sample initial code for demonstration
+        const sampleInitialCode = `function findMatrixMultiplication(a, b) {
+  if (!a || !a.length || !a[0].length || !b || !b.length || !b[0].length) {
+    throw new Error("Invalid matrices");
+  }
+  
+  const rowsA = a.length;
+  const colsA = a[0].length;
+  const rowsB = b.length;
+  const colsB = b[0].length;
+  
+  if (colsA !== rowsB) {
+    throw new Error("Matrices cannot be multiplied");
+  }
+  
+  const result = [];
+  
+  for (let i = 0; i < rowsA; i++) {
+    result[i] = [];
+    for (let j = 0; j < colsB; j++) {
+      let sum = 0;
+      for (let k = 0; k < colsA; k++) {
+        sum += a[i][k] * b[k][j];
+      }
+      result[i][j] = sum;
+    }
+  }
+  
+  return result;
+}`;
+
+        // Load Monaco Editor
+        require.config({ paths: { vs: 'https://unpkg.com/monaco-editor@0.33.0/min/vs' } });
+        
+        require(['vs/editor/editor.main'], function () {
+            // Define editor theme for dark mode
+            monaco.editor.defineTheme('myDarkTheme', {
+                base: 'vs-dark',
+                inherit: true,
+                rules: [],
+                colors: {
+                    'editor.background': '#1e1e1e',
+                }
+            });
+            
+            // Initialize editors
+            const editor = monaco.editor.create(document.getElementById('code-editor-container'), {
+                value: sampleInitialCode,
+                language: 'javascript',
+                theme: document.documentElement.classList.contains('dark') ? 'myDarkTheme' : 'vs',
+                minimap: { enabled: false },
+                scrollBeyondLastLine: false,
+                lineNumbers: 'on',
+                glyphMargin: false,
+                folding: true,
+                fontSize: 14,
+            });
+            
+            const evolutionEditor = monaco.editor.create(document.getElementById('evolution-container'), {
+                value: sampleInitialCode,
+                language: 'javascript',
+                theme: document.documentElement.classList.contains('dark') ? 'myDarkTheme' : 'vs',
+                minimap: { enabled: false },
+                scrollBeyondLastLine: false,
+                lineNumbers: 'on',
+                glyphMargin: false,
+                folding: true,
+                fontSize: 14,
+                readOnly: true
+            });
+            
+            // Handle theme changes
+            document.getElementById('theme-toggle').addEventListener('click', () => {
+                const isDark = document.documentElement.classList.contains('dark');
+                editor.updateOptions({ theme: isDark ? 'myDarkTheme' : 'vs' });
+                evolutionEditor.updateOptions({ theme: isDark ? 'myDarkTheme' : 'vs' });
+            });
+            
+            // Handle window resize events
+            window.addEventListener('resize', () => {
+                editor.layout();
+                evolutionEditor.layout();
+            });
+            
+            // Evolution process simulation
+            let isEvolutionRunning = false;
+            let currentGeneration = 0;
+            let evolutionHistory = [];
+            
+            // Sample improvements for simulation
+            const sampleImprovements = [
+                {
+                    code: `function findMatrixMultiplication(a, b) {
+  if (!a || !a.length || !a[0].length || !b || !b.length || !b[0].length) {
+    throw new Error("Invalid matrices");
+  }
+  
+  const rowsA = a.length;
+  const colsA = a[0].length;
+  const rowsB = b.length;
+  const colsB = b[0].length;
+  
+  if (colsA !== rowsB) {
+    throw new Error("Matrices cannot be multiplied");
+  }
+  
+  // Pre-allocate result array for better performance
+  const result = new Array(rowsA);
+  for (let i = 0; i < rowsA; i++) {
+    result[i] = new Array(colsB).fill(0);
+  }
+  
+  for (let i = 0; i < rowsA; i++) {
+    for (let j = 0; j < colsB; j++) {
+      let sum = 0;
+      for (let k = 0; k < colsA; k++) {
+        sum += a[i][k] * b[k][j];
+      }
+      result[i][j] = sum;
+    }
+  }
+  
+  return result;
+}`,
+                    diff: "Pre-allocated result array with proper size and filled with zeros for better memory management and performance.",
+                    metrics: {
+                        performance: 0.28,
+                        memory: 0.35,
+                        correctness: 0.62,
+                        readability: 0.45
+                    }
+                },
+                {
+                    code: `function findMatrixMultiplication(a, b) {
+  // Early validation of input matrices
+  if (!a?.length || !a[0]?.length || !b?.length || !b[0]?.length) {
+    throw new Error("Invalid matrices");
+  }
+  
+  const rowsA = a.length;
+  const colsA = a[0].length;
+  const rowsB = b.length;
+  const colsB = b[0].length;
+  
+  if (colsA !== rowsB) {
+    throw new Error("Matrices cannot be multiplied");
+  }
+  
+  // Pre-allocate result array for better performance
+  const result = new Array(rowsA);
+  for (let i = 0; i < rowsA; i++) {
+    result[i] = new Array(colsB).fill(0);
+  }
+  
+  // Loop optimization: moved invariant checks out of inner loops
+  for (let i = 0; i < rowsA; i++) {
+    for (let j = 0; j < colsB; j++) {
+      let sum = 0;
+      for (let k = 0; k < colsA; k++) {
+        sum += a[i][k] * b[k][j];
+      }
+      result[i][j] = sum;
+    }
+  }
+  
+  return result;
+}`,
+                    diff: "Improved null checks with optional chaining. Added comments to explain the purpose of each section.",
+                    metrics: {
+                        performance: 0.42,
+                        memory: 0.48,
+                        correctness: 0.78,
+                        readability: 0.67
+                    }
+                },
+                {
+                    code: `function findMatrixMultiplication(a, b) {
+  // Early validation of input matrices
+  if (!a?.length || !a[0]?.length || !b?.length || !b[0]?.length) {
+    throw new Error("Invalid matrices");
+  }
+  
+  const rowsA = a.length;
+  const colsA = a[0].length;
+  const rowsB = b.length;
+  const colsB = b[0].length;
+  
+  if (colsA !== rowsB) {
+    throw new Error("Matrices cannot be multiplied");
+  }
+  
+  // Pre-allocate result array for better performance
+  const result = new Array(rowsA);
+  for (let i = 0; i < rowsA; i++) {
+    result[i] = new Array(colsB).fill(0);
+  }
+  
+  // Block matrix multiplication for better cache utilization
+  const blockSize = 16; // Adjust based on cache size
+  
+  for (let i0 = 0; i0 < rowsA; i0 += blockSize) {
+    const iLimit = Math.min(i0 + blockSize, rowsA);
+    for (let j0 = 0; j0 < colsB; j0 += blockSize) {
+      const jLimit = Math.min(j0 + blockSize, colsB);
+      for (let k0 = 0; k0 < colsA; k0 += blockSize) {
+        const kLimit = Math.min(k0 + blockSize, colsA);
+        
+        // Multiply blocks
+        for (let i = i0; i < iLimit; i++) {
+          for (let j = j0; j < jLimit; j++) {
+            let sum = result[i][j];
+            for (let k = k0; k < kLimit; k++) {
+              sum += a[i][k] * b[k][j];
+            }
+            result[i][j] = sum;
+          }
+        }
+      }
+    }
+  }
+  
+  return result;
+}`,
+                    diff: "Implemented block matrix multiplication to improve cache utilization and performance for large matrices.",
+                    metrics: {
+                        performance: 0.73,
+                        memory: 0.66,
+                        correctness: 0.85,
+                        readability: 0.59
+                    }
+                },
+                {
+                    code: `/**
+ * Efficiently multiplies two matrices using a tiled approach for better cache utilization.
+ * @param {number[][]} a - The first matrix
+ * @param {number[][]} b - The second matrix
+ * @returns {number[][]} The resulting matrix from a×b
+ * @throws {Error} If matrices are invalid or cannot be multiplied
+ */
+function findMatrixMultiplication(a, b) {
+  // Early validation of input matrices
+  if (!a?.length || !a[0]?.length || !b?.length || !b[0]?.length) {
+    throw new Error("Invalid matrices");
+  }
+  
+  const rowsA = a.length;
+  const colsA = a[0].length;
+  const rowsB = b.length;
+  const colsB = b[0].length;
+  
+  if (colsA !== rowsB) {
+    throw new Error("Matrices cannot be multiplied");
+  }
+  
+  // Optimize for small matrices
+  if (rowsA < 32 || colsB < 32 || colsA < 32) {
+    return simpleMatrixMultiply(a, b, rowsA, colsA, colsB);
+  }
+  
+  // Pre-allocate result array for better performance
+  const result = new Array(rowsA);
+  for (let i = 0; i < rowsA; i++) {
+    result[i] = new Array(colsB).fill(0);
+  }
+  
+  // Transpose matrix B for better memory access patterns
+  const bTransposed = transposeMatrix(b, rowsB, colsB);
+  
+  // Adaptive block size based on matrix dimensions
+  const blockSize = determineOptimalBlockSize(rowsA, colsA, colsB);
+  
+  for (let i0 = 0; i0 < rowsA; i0 += blockSize) {
+    const iLimit = Math.min(i0 + blockSize, rowsA);
+    for (let j0 = 0; j0 < colsB; j0 += blockSize) {
+      const jLimit = Math.min(j0 + blockSize, colsB);
+      for (let k0 = 0; k0 < colsA; k0 += blockSize) {
+        const kLimit = Math.min(k0 + blockSize, colsA);
+        
+        // Multiply blocks with transposed access for b
+        for (let i = i0; i < iLimit; i++) {
+          for (let j = j0; j < jLimit; j++) {
+            let sum = result[i][j];
+            for (let k = k0; k < kLimit; k++) {
+              sum += a[i][k] * bTransposed[j][k]; // Transposed access
+            }
+            result[i][j] = sum;
+          }
+        }
+      }
+    }
+  }
+  
+  return result;
+}
+
+// Helper function for small matrices
+function simpleMatrixMultiply(a, b, rowsA, colsA, colsB) {
+  const result = new Array(rowsA);
+  for (let i = 0; i < rowsA; i++) {
+    result[i] = new Array(colsB).fill(0);
+    for (let j = 0; j < colsB; j++) {
+      for (let k = 0; k < colsA; k++) {
+        result[i][j] += a[i][k] * b[k][j];
+      }
+    }
+  }
+  return result;
+}
+
+// Helper function to transpose a matrix
+function transposeMatrix(matrix, rows, cols) {
+  const transposed = new Array(cols);
+  for (let j = 0; j < cols; j++) {
+    transposed[j] = new Array(rows);
+    for (let i = 0; i < rows; i++) {
+      transposed[j][i] = matrix[i][j];
+    }
+  }
+  return transposed;
+}
+
+// Helper function to determine optimal block size
+function determineOptimalBlockSize(m, n, p) {
+  // Simplistic heuristic - can be improved with hardware-specific knowledge
+  const avgDim = (m + n + p) / 3;
+  if (avgDim > 1000) return 64;
+  if (avgDim > 500) return 32;
+  return 16;
+}`,
+                    diff: "Major refactoring with JSDoc annotations, helper functions, adaptive block sizing, and matrix transposition for optimal cache usage. Added special-case handling for small matrices.",
+                    metrics: {
+                        performance: 0.91,
+                        memory: 0.82,
+                        correctness: 0.94,
+                        readability: 0.87
+                    }
+                }
+            ];
+            
+            // Start evolution simulation
+            document.getElementById('start-evolution-btn').addEventListener('click', () => {
+                if (isEvolutionRunning) return;
+                
+                isEvolutionRunning = true;
+                currentGeneration = 0;
+                evolutionHistory = [];
+                
+                const initialCode = editor.getValue();
+                evolutionEditor.setValue(initialCode);
+                
+                document.getElementById('generation-counter').textContent = `Generation: ${currentGeneration}`;
+                document.getElementById('evolution-history').innerHTML = '';
+                document.getElementById('progress-bar').style.width = '0%';
+                document.getElementById('progress-percentage').textContent = '0%';
+                document.getElementById('llm-analysis').innerHTML = '<p class="text-gray-700 dark:text-gray-300">Analyzing initial code...</p>';
+                
+                // Reset metrics
+                document.getElementById('performance-score').textContent = '0.00';
+                document.getElementById('memory-score').textContent = '0.00';
+                document.getElementById('correctness-score').textContent = '0.00';
+                document.getElementById('readability-score').textContent = '0.00';
+                
+                // Simulate evolution process
+                runEvolution();
+            });
+            
+            function runEvolution() {
+                if (currentGeneration >= sampleImprovements.length) {
+                    isEvolutionRunning = false;
+                    document.getElementById('llm-analysis').innerHTML = generateFinalAnalysis();
+                    return;
+                }
+                
+                currentGeneration++;
+                const progress = (currentGeneration / sampleImprovements.length) * 100;
+                
+                // Update progress indicators
+                document.getElementById('progress-bar').style.width = `${progress}%`;
+                document.getElementById('progress-percentage').textContent = `${Math.round(progress)}%`;
+                document.getElementById('generation-counter').textContent = `Generation: ${currentGeneration}`;
+                
+                // Get current improvement
+                const improvement = sampleImprovements[currentGeneration - 1];
+                
+                // Update editor with improved code
+                evolutionEditor.setValue(improvement.code);
+                
+                // Update metrics
+                document.getElementById('performance-score').textContent = improvement.metrics.performance.toFixed(2);
+                document.getElementById('memory-score').textContent = improvement.metrics.memory.toFixed(2);
+                document.getElementById('correctness-score').textContent = improvement.metrics.correctness.toFixed(2);
+                document.getElementById('readability-score').textContent = improvement.metrics.readability.toFixed(2);
+                
+                // Add to history
+                addToEvolutionHistory(improvement, currentGeneration);
+                
+                // Update LLM analysis
+                document.getElementById('llm-analysis').innerHTML = generateAnalysis(improvement, currentGeneration);
+                
+                // Continue evolution after delay
+                setTimeout(runEvolution, 3000);
+            }
+            
+            function addToEvolutionHistory(improvement, generation) {
+                const historyContainer = document.getElementById('evolution-history');
+                
+                const historyItem = document.createElement('div');
+                historyItem.className = 'bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700';
+                
+                historyItem.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <h3 class="text-lg font-medium text-gray-800 dark:text-gray-200">Generation ${generation}</h3>
+                        <div class="flex space-x-2">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 dark:bg-indigo-800 dark:text-indigo-100">
+                                Performance: ${improvement.metrics.performance.toFixed(2)}
+                            </span>
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100">
+                                Correctness: ${improvement.metrics.correctness.toFixed(2)}
+                            </span>
+                        </div>
+                    </div>
+                    <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">${improvement.diff}</p>
+                    <div class="mt-3">
+                        <button class="view-diff-btn text-xs text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300">
+                            View code diff
+                        </button>
+                        <div class="code-diff-container hidden mt-2 code-diff-block bg-gray-100 dark:bg-gray-700 rounded">
+                            <pre class="language-javascript"><code>${improvement.code}</code></pre>
+                        </div>
+                    </div>
+                `;
+                
+                // Add to beginning of history
+                if (historyContainer.firstChild) {
+                    historyContainer.insertBefore(historyItem, historyContainer.firstChild);
+                } else {
+                    historyContainer.appendChild(historyItem);
+                }
+                
+                // Add event listener to view diff button
+                const viewDiffBtn = historyItem.querySelector('.view-diff-btn');
+                const codeDiffContainer = historyItem.querySelector('.code-diff-container');
+                
+                viewDiffBtn.addEventListener('click', () => {
+                    if (codeDiffContainer.classList.contains('hidden')) {
+                        codeDiffContainer.classList.remove('hidden');
+                        viewDiffBtn.textContent = 'Hide code diff';
+                    } else {
+                        codeDiffContainer.classList.add('hidden');
+                        viewDiffBtn.textContent = 'View code diff';
+                    }
+                });
+            }
+            
+            function generateAnalysis(improvement, generation) {
+                let analysisHTML = '';
+                
+                const primaryGoal = document.getElementById('optimization-goal').value;
+                const minimizeSize = document.getElementById('constraint-size').checked;
+                const maximizeCompatibility = document.getElementById('constraint-compatibility').checked;
+                const reduceComplexity = document.getElementById('constraint-complexity').checked;
+                
+                switch(generation) {
+                    case 1:
+                        analysisHTML = `
+                            <h3 class="text-lg font-medium mb-2">Generation ${generation} Analysis</h3>
+                            <p>The LLM has made its first round of improvements to the matrix multiplication algorithm, focusing on memory management.</p>
+                            <ul class="list-disc pl-5 space-y-1 mt-2">
+                                <li>Pre-allocated the result array with zeros, improving performance by avoiding dynamic array growth</li>
+                                <li>This optimization is particularly effective for large matrices</li>
+                                <li>No changes to the core multiplication algorithm yet</li>
+                            </ul>
+                            ${primaryGoal === 'memory' ? '<p class="mt-2 text-green-600 dark:text-green-400">This change directly addresses your primary goal of memory efficiency.</p>' : ''}
+                        `;
+                        break;
+                    
+                    case 2:
+                        analysisHTML = `
+                            <h3 class="text-lg font-medium mb-2">Generation ${generation} Analysis</h3>
+                            <p>The LLM has improved the code robustness and readability.</p>
+                            <ul class="list-disc pl-5 space-y-1 mt-2">
+                                <li>Switched to optional chaining for more concise null checks</li>
+                                <li>Added descriptive comments to explain the code structure</li>
+                                <li>Identified loop invariants for potential optimization</li>
+                            </ul>
+                            ${primaryGoal === 'readability' || primaryGoal === 'correctness' ? '<p class="mt-2 text-green-600 dark:text-green-400">This change directly addresses your primary goal of code ' + primaryGoal + '.</p>' : ''}
+                        `;
+                        break;
+                        
+                    case 3:
+                        analysisHTML = `
+                            <h3 class="text-lg font-medium mb-2">Generation ${generation} Analysis</h3>
+                            <p>The LLM has implemented a significant algorithmic optimization:</p>
+                            <ul class="list-disc pl-5 space-y-1 mt-2">
+                                <li>Introduced block matrix multiplication to improve cache utilization</li>
+                                <li>Performance improvement expected to be significant for large matrices</li>
+                                <li>The code complexity has increased but with clear performance benefits</li>
+                                ${reduceComplexity ? '<li class="text-amber-600 dark:text-amber-400">Note: This change increases algorithmic complexity, which conflicts with your constraint to reduce complexity</li>' : ''}
+                            </ul>
+                            ${primaryGoal === 'performance' ? '<p class="mt-2 text-green-600 dark:text-green-400">This change directly addresses your primary goal of runtime performance.</p>' : ''}
+                        `;
+                        break;
+                        
+                    case 4:
+                        analysisHTML = `
+                            <h3 class="text-lg font-medium mb-2">Generation ${generation} Analysis</h3>
+                            <p>The LLM has performed a comprehensive refactoring:</p>
+                            <ul class="list-disc pl-5 space-y-1 mt-2">
+                                <li>Added JSDoc documentation for better code understanding</li>
+                                <li>Implemented matrix transposition for improved memory access patterns</li>
+                                <li>Created helper functions for better code organization and reuse</li>
+                                <li>Added adaptive block sizing based on matrix dimensions</li>
+                                <li>Special-case handling for small matrices avoids overhead of blocking</li>
+                                ${minimizeSize ? '<li class="text-amber-600 dark:text-amber-400">Note: The code size has increased significantly, which conflicts with your constraint to minimize code size</li>' : ''}
+                            </ul>
+                            <p class="mt-2">This final implementation significantly improves all metrics compared to the original code.</p>
+                        `;
+                        break;
+                }
+                
+                return analysisHTML;
+            }
+            
+            function generateFinalAnalysis() {
+                const primaryGoal = document.getElementById('optimization-goal').value;
+                
+                // Create descriptions based on the primary goal
+                let goalDescription = '';
+                switch(primaryGoal) {
+                    case 'performance':
+                        goalDescription = 'runtime performance optimization';
+                        break;
+                    case 'memory':
+                        goalDescription = 'memory efficiency';
+                        break;
+                    case 'correctness':
+                        goalDescription = 'code correctness and robustness';
+                        break;
+                    case 'readability':
+                        goalDescription = 'code readability and maintainability';
+                        break;
+                }
+                
+                const finalMetrics = sampleImprovements[sampleImprovements.length - 1].metrics;
+                
+                return `
+                    <h3 class="text-lg font-medium mb-2">Final Evolution Analysis</h3>
+                    
+                    <p>After ${sampleImprovements.length} generations of evolution, the code has been significantly improved with a focus on ${goalDescription}.</p>
+                    
+                    <div class="mt-4 mb-4">
+                        <h4 class="font-medium text-gray-800 dark:text-gray-200">Improvement Summary:</h4>
+                        <div class="mt-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-white dark:bg-gray-700 shadow rounded-lg p-4">
+                                <div class="text-sm text-gray-500 dark:text-gray-400">Performance</div>
+                                <div class="flex items-center mt-1">
+                                    <div class="text-xl font-semibold text-gray-800 dark:text-gray-200">${finalMetrics.performance.toFixed(2)}</div>
+                                    <div class="ml-2 text-green-600 dark:text-green-400">+${(finalMetrics.performance * 100).toFixed(0)}%</div>
+                                </div>
+                                <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2 mt-2">
+                                    <div class="bg-indigo-600 h-2 rounded-full" style="width: ${finalMetrics.performance * 100}%"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-white dark:bg-gray-700 shadow rounded-lg p-4">
+                                <div class="text-sm text-gray-500 dark:text-gray-400">Memory Efficiency</div>
+                                <div class="flex items-center mt-1">
+                                    <div class="text-xl font-semibold text-gray-800 dark:text-gray-200">${finalMetrics.memory.toFixed(2)}</div>
+                                    <div class="ml-2 text-green-600 dark:text-green-400">+${(finalMetrics.memory * 100).toFixed(0)}%</div>
+                                </div>
+                                <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2 mt-2">
+                                    <div class="bg-indigo-600 h-2 rounded-full" style="width: ${finalMetrics.memory * 100}%"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-white dark:bg-gray-700 shadow rounded-lg p-4">
+                                <div class="text-sm text-gray-500 dark:text-gray-400">Correctness</div>
+                                <div class="flex items-center mt-1">
+                                    <div class="text-xl font-semibold text-gray-800 dark:text-gray-200">${finalMetrics.correctness.toFixed(2)}</div>
+                                    <div class="ml-2 text-green-600 dark:text-green-400">+${(finalMetrics.correctness * 100).toFixed(0)}%</div>
+                                </div>
+                                <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2 mt-2">
+                                    <div class="bg-indigo-600 h-2 rounded-full" style="width: ${finalMetrics.correctness * 100}%"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-white dark:bg-gray-700 shadow rounded-lg p-4">
+                                <div class="text-sm text-gray-500 dark:text-gray-400">Readability</div>
+                                <div class="flex items-center mt-1">
+                                    <div class="text-xl font-semibold text-gray-800 dark:text-gray-200">${finalMetrics.readability.toFixed(2)}</div>
+                                    <div class="ml-2 text-green-600 dark:text-green-400">+${(finalMetrics.readability * 100).toFixed(0)}%</div>
+                                </div>
+                                <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2 mt-2">
+                                    <div class="bg-indigo-600 h-2 rounded-full" style="width: ${finalMetrics.readability * 100}%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h4 class="font-medium text-gray-800 dark:text-gray-200 mt-4">Key Evolutionary Steps:</h4>
+                    <ol class="list-decimal pl-5 mt-2 space-y-2">
+                        <li>Pre-allocation of result array with proper sizing</li>
+                        <li>Enhanced validation with modern JavaScript features</li>
+                        <li>Implementation of block matrix multiplication for cache optimization</li>
+                        <li>Matrix transposition for improved memory access patterns</li>
+                        <li>Adaptive optimization based on input matrix dimensions</li>
+                    </ol>
+                    
+                    <div class="mt-6 p-4 bg-blue-50 dark:bg-blue-900 rounded-lg">
+                        <h4 class="font-medium text-blue-800 dark:text-blue-200">AI Recommendation</h4>
+                        <p class="mt-1 text-blue-700 dark:text-blue-300">The final algorithm demonstrates significant improvements across all metrics. For production use, consider benchmarking with your specific workloads to validate the optimizations. Further improvements could explore SIMD instructions or WebAssembly for specific high-performance applications.</p>
+                    </div>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>
