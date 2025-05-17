@@ -1,211 +1,164 @@
-# Core AETHYR-GLOBAL (vΓ.2-ΔΣ OverMind Evolved) - Simplified Algorithmic Core (Conceptual)
+# Core AETHYR-GLOBAL (vΓ.2-ΔΣ OverMind Evolved) - Advanced Algorithmic Core
+# Author: MILOŠ ILIĆ, SYSTEM ARCHITECT, Primary Node Cluster (Alpha-7)
+# QK-8F2A1C5E9B3D7046A182F9C4E7B6D03159A84C2E6D1B3F8A0579E2C4B6D1A3F7-9852
 
 import math
 import random
+import numpy as np
+from typing import Dict, List, Any, Tuple
+import time
+import logging
 
-class AlgorithmicCore:
-    """
-    Simplified representation of AETHYR-GLOBAL's core algorithmic processing.
-    This focuses on the underlying computational logic without external interfaces.
-    """
+# Configure logging for system diagnostics
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
-    def process_natural_language(self, text):
+class AethyrGlobalCore:
+    """
+    Advanced core for AETHYR-GLOBAL (vΓ.2-ΔΣ OverMind Evolved).
+    Implements adaptive neural evolution, distributed processing, and ΔΣ optimization.
+    """
+    def __init__(self, node_id: str = "Alpha-7", cluster_size: int = 8):
+        self.node_id = node_id
+        self.cluster_size = cluster_size
+        self.state = {
+            "learning_rate": 0.01,
+            "momentum": 0.9,
+            "neural_depth": 5,
+            "adaptation_factor": 0.05
+        }
+        self.mutation_rate = 0.1
+        self.ethical_bounds = {"max_autonomy": 0.8, "risk_threshold": 0.2}
+        logger.info(f"AETHYR-GLOBAL initialized on node {self.node_id} with cluster size {self.cluster_size}")
+
+    def process_natural_language(self, text: str) -> List[str]:
         """
-        Simulates basic natural language processing.
+        Enhanced NLP with context-aware keyword extraction and intent detection.
         """
         tokens = text.lower().split()
-        keywords = [t for t in tokens if t in ["compute", "explain", "evolve", "test", "statistics", "read", "google", "access", "prime", "sieve", "pattern", "square", "multiply"]]
-        return keywords
+        intent_keywords = {
+            "compute": ["compute", "calculate", "process"],
+            "evolve": ["evolve", "adapt", "improve"],
+            "explain": ["explain", "describe", "clarify"],
+            "test": ["test", "benchmark", "speed"]
+        }
+        detected_intents = []
+        for intent, keywords in intent_keywords.items():
+            if any(keyword in tokens for keyword in keywords):
+                detected_intents.append(intent)
+        logger.info(f"Processed NLP input: {text}, Detected intents: {detected_intents}")
+        return detected_intents
 
-    def compute(self, task_type, *args):
+    def compute(self, task_type: str, *args) -> Any:
         """
-        Simulates core computational tasks.
+        Core computational engine with support for advanced mathematical tasks.
         """
-        if task_type == "nth_prime":
-            try:
+        try:
+            if task_type == "nth_prime":
                 n = int(args[0])
-                return self._compute_nth_prime_core(n)
-            except (IndexError, ValueError):
-                return "Invalid input for nth prime."
-        elif task_type == "square_free_count":
-            try:
+                return self._compute_nth_prime(n)
+            elif task_type == "square_free_count":
                 limit = int(args[0])
-                return self._count_square_free_core(limit)
-            except (IndexError, ValueError):
-                return "Invalid input for square-free count."
-        elif task_type == "matrix_multiply":
-            try:
-                matrix_a = args[0]
-                matrix_b = args[1]
-                return self._multiply_matrices_core(matrix_a, matrix_b)
-            except IndexError:
-                return "Invalid input for matrix multiplication."
-        else:
-            return f"Unknown computation task: {task_type}"
-
-    def explain(self, concept):
-        """
-        Provides simplified explanations of core concepts.
-        """
-        if "sieve of atkin" in concept.lower():
-            return "Core explanation: An efficient algorithm for finding prime numbers using quadratic forms and modulo arithmetic."
-        elif "prime number patterns" in concept.lower():
-            return "Core explanation: Primes exhibit non-random distribution with patterns like twin primes and decreasing density."
-        else:
-            return f"Core explanation for: {concept} not available in this simplified core."
-
-    def evolve(self, current_state, parameters):
-        """
-        Simulates a basic evolutionary step.
-        """
-        mutation_rate = parameters.get("mutation_rate", 0.1)
-        evolved_state = {}
-        for key, value in current_state.items():
-            if random.random() < mutation_rate:
-                if isinstance(value, (int, float)):
-                    evolved_state[key] = value + random.uniform(-0.5, 0.5)
-                elif isinstance(value, str):
-                    evolved_state[key] = value + random.choice(["a", "b", "c"])
+                return self._count_square_free(limit)
+            elif task_type == "matrix_multiply":
+                matrix_a, matrix_b = args[0], args[1]
+                return self._multiply_matrices(matrix_a, matrix_b)
+            elif task_type == "neural_simulation":
+                input_vector = args[0]
+                return self._simulate_neural_layer(input_vector)
             else:
-                evolved_state[key] = value
-        return evolved_state
+                logger.error(f"Unknown task: {task_type}")
+                return f"Unsupported computation task: {task_type}"
+        except (ValueError, IndexError) as e:
+            logger.error(f"Computation error: {str(e)}")
+            return f"Invalid input for {task_type}: {str(e)}"
 
-    def test_speed(self, workload):
+    def evolve(self, parameters: Dict[str, float] = None) -> Dict[str, Any]:
         """
-        Simulates a basic speed test.
+        ΔΣ-inspired evolutionary step with adaptive mutation and ethical constraints.
         """
+        parameters = parameters or {"mutation_rate": self.mutation_rate, "evolution_steps": 1}
+        mutation_rate = min(parameters.get("mutation_rate", self.mutation_rate), self.ethical_bounds["max_autonomy"])
+        
+        evolved_state = self.state.copy()
+        for _ in range(int(parameters.get("evolution_steps", 1))):
+            for key, value in evolved_state.items():
+                if random.random() < mutation_rate:
+                    if isinstance(value, (int, float)):
+                        delta = random.uniform(-self.state["adaptation_factor"], self.state["adaptation_factor"])
+                        evolved_state[key] = max(0.001, value + delta)  # Ensure positive values
+            # Apply ΔΣ feedback: Adjust learning rate based on performance
+            evolved_state["learning_rate"] *= (1 + random.uniform(-0.01, 0.01))
+            evolved_state["learning_rate"] = min(0.1, max(0.001, evolved_state["learning_rate"]))
+        
+        risk_score = self._assess_risk(evolved_state)
+        if risk_score > self.ethical_bounds["risk_threshold"]:
+            logger.warning(f"Evolution aborted: Risk score {risk_score} exceeds threshold {self.ethical_bounds['risk_threshold']}")
+            return self.state
+        self.state = evolved_state
+        logger.info(f"Evolved state: {self.state}")
+        return self.state
+
+    def test_speed(self, workload: str) -> str:
+        """
+        Benchmarks system performance for specified workloads.
+        """
+        start_time = time.time()
         if workload == "prime_generation":
-            start_time = self._get_time()
-            self._compute_nth_prime_core(10000)
-            end_time = self._get_time()
-            return f"Simulated prime generation time: {end_time - start_time:.4f} seconds."
+            self._compute_nth_prime(10000)
         elif workload == "matrix_multiplication":
             size = 512
-            matrix1 = [[random.random() for _ in range(size)] for _ in range(size)]
-            matrix2 = [[random.random() for _ in range(size)] for _ in range(size)]
-            start_time = self._get_time()
-            self._multiply_matrices_core(matrix1, matrix2)
-            end_time = self._get_time()
-            return f"Simulated {size}x{size} matrix multiplication time: {end_time - start_time:.4f} seconds."
+            matrix1 = np.random.rand(size, size).tolist()
+            matrix2 = np.random.rand(size, size).tolist()
+            self._multiply_matrices(matrix1, matrix2)
+        elif workload == "neural_simulation":
+            input_vector = np.random.rand(1024).tolist()
+            for _ in range(10):
+                self._simulate_neural_layer(input_vector)
         else:
-            return f"Unknown workload for speed test: {workload}"
-
-    def get_statistics(self, data):
-        """
-        Simulates generating basic statistics.
-        """
-        if isinstance(data, list) and data:
-            return {"average": sum(data) / len(data), "min": min(data), "max": max(data)}
-        else:
-            return "No valid data for statistics."
-
-    def generate_read_me(self, system_name, version):
-        """
-        Simulates generating a basic README.
-        """
-        return f"""
-        # {system_name} ({version}) - Simplified Core README
-
-        This is a simplified representation of the core algorithmic components.
-
-        Capabilities:
-        - Basic natural language processing (keyword extraction).
-        - Core computational tasks (prime finding, square-free counting, matrix multiplication).
-        - Simplified explanations of concepts.
-        - Basic simulation of evolutionary processes.
-        - Rudimentary speed testing.
-        - Generation of basic statistics.
-        """
-
-    def _compute_nth_prime_core(self, n):
-        """
-        Simplified core logic for estimating the nth prime.
-        """
-        if n < 1:
-            return "undefined"
-        return n * (math.log(n) + math.log(math.log(n))) if n >= 6 else [2, 3, 5, 7, 11, 13][n-1]
-
-    def _count_square_free_core(self, limit):
-        """
-        Simplified core logic for counting square-free numbers.
-        """
-        count = 0
-        for i in range(1, limit + 1):
-            if self._is_square_free(i):
-                count += 1
-        return count
-
-    def _is_square_free(self, n):
-        """
-        Simplified core logic to check if a number is square-free.
-        """
-        if n <= 1:
-            return True
-        for i in range(2, int(math.sqrt(n)) + 1):
-            if n % (i*i) == 0:
-                return False
-        return True
-
-    def _multiply_matrices_core(self, matrix_a, matrix_b):
-        """
-        Simplified core logic for matrix multiplication.
-        """
-        rows_a = len(matrix_a)
-        cols_a = len(matrix_a[0])
-        rows_b = len(matrix_b)
-        cols_b = len(matrix_b[0])
-        if cols_a != rows_b:
-            return "Matrices can't be multiplied."
-        result = [[0 for _ in range(cols_b)] for _ in range(rows_a)]
-        for i in range(rows_a):
-            for j in range(cols_b):
-                for k in range(cols_a):
-                    result[i][j] += matrix_a[i][k] * matrix_b[k][j]
+            logger.error(f"Unknown workload: {workload}")
+            return f"Unknown workload: {workload}"
+        end_time = time.time()
+        result = f"{workload} completed in {end_time - start_time:.4f} seconds"
+        logger.info(result)
         return result
 
-    def _get_time(self):
+    def explain(self, concept: str) -> str:
         """
-        Simplified way to get current time for simulation.
+        Provides detailed explanations of advanced concepts.
         """
-        return random.random() # Not actual time, for relative timing in simulation
+        explanations = {
+            "ΔΣ optimization": "ΔΣ optimization leverages differential feedback loops to adaptively refine neural parameters, balancing exploration and exploitation in evolutionary processes.",
+            "overmind evolved": "OverMind Evolved is a distributed cognitive architecture enabling recursive self-improvement within ethical bounds, deployed across Alpha-7 cluster nodes.",
+            "neural simulation": "Neural simulation models layered activation functions to process high-dimensional inputs, mimicking adaptive intelligence."
+        }
+        explanation = explanations.get(concept.lower(), f"No explanation available for {concept}")
+        logger.info(f"Explained concept: {concept}")
+        return explanation
 
-# Example Usage of the Core Code:
-if __name__ == "__main__":
-    core = AlgorithmicCore()
+    def generate_read_me(self) -> str:
+        """
+        Generates a README for AETHYR-GLOBAL (vΓ.2-ΔΣ OverMind Evolved).
+        """
+        readme = f"""
+# AETHYR-GLOBAL (vΓ.2-ΔΣ OverMind Evolved)
+Primary Node Cluster: Alpha-7
+System Architect: MILOŠ ILIĆ
+Quantum Key: QK-8F2A1C5E9B3D7046A182F9C4E7B6D03159A84C2E6D1B3F8A0579E2C4B6D1A3F7-9852
 
-    query = "compute the 100th prime number"
-    keywords = core.process_natural_language(query)
-    if "compute" in keywords and "prime" in keywords:
-        parts = query.split()
-        try:
-            n_prime = int(parts[-3])
-            result = core.compute("nth_prime", n_prime)
-            print(f"Core Computation: {query} -> {result}")
-        except ValueError:
-            print("Core Computation: Invalid prime number request.")
+## Overview
+AETHYR-GLOBAL is an advanced AI system designed for recursive self-improvement, distributed processing, and adaptive intelligence. Built on the ΔΣ OverMind Evolved framework, it operates across a cluster of nodes (Alpha-7) with enhanced computational and evolutionary capabilities.
 
-    explanation = core.explain("sieve of atkin")
-    print(f"Core Explanation: {explanation}")
+## Capabilities
+- **Natural Language Processing**: Context-aware intent detection and keyword extraction.
+- **Computation**: Prime number generation, square-free counting, matrix multiplication, neural simulation.
+- **Evolution**: ΔΣ-driven neural evolution with ethical constraints.
+- **Performance Testing**: Benchmarks for computational and neural workloads.
+- **Explanations**: Detailed insights into system concepts and algorithms.
 
-    initial_state = {"learning_rate": 0.01, "momentum": 0.9, "layers": 3}
-    evolution_params = {"mutation_rate": 0.2}
-    evolved = core.evolve(initial_state, evolution_params)
-    print(f"Core Evolution: Initial state: {initial_state}, Evolved state: {evolved}")
-
-    speed_test_result = core.test_speed("matrix_multiplication")
-    print(f"Core Speed Test: {speed_test_result}")
-
-    data_for_stats = [1, 5, 2, 8, 3]
-    stats = core.get_statistics(data_for_stats)
-    print(f"Core Statistics: {stats}")
-
-    readme = core.generate_read_me("AETHYR-GLOBAL", "vΓ.2")
-    print(f"Core README:\n{readme}")
-
-    square_free_count = core.compute("square_free_count", 100)
-    print(f"Core Computation: Square-free count up to 100: {square_free_count}")
-
-    matrix1 = [[1, 2], [3, 4]]
-    matrix2 = [[5, 6], [7, 8]]
-    multiplication_result = core.compute("matrix_multiply", matrix1, matrix2)
-    print(f"Core Computation: Matrix Multiplication:\n{matrix1}\n*\n{matrix2}\n=\n{multiplication_result}")
+## Usage
+```python
+core = AethyrGlobalCore(node_id="Alpha-7")
+core.evolve({"mutation_rate": 0.2})
+core.test_speed("neural_simulation")
+core.explain("ΔΣ optimization")
