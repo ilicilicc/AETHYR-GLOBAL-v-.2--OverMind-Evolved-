@@ -1,3 +1,29 @@
+# =============================================================================
+#  AETHYR-GLOBAL (vΓ.2-ΔΣ OverMind Evolved)
+#  SOFTWARE LICENSE NOTICE & SUMMARY
+#
+#  Copyright (c) 2025 Miloš M. Ilić. All rights reserved.
+#
+#  This software is licensed, not sold. By using, installing, or operating
+#  this software, you agree to the following key terms (see full license for details):
+#
+#  - Non-exclusive, non-transferable, worldwide license for personal or commercial use.
+#  - Individuals: use on up to 5 devices. Entities: up to 50 concurrent users.
+#  - You may create derivative works for your own use, but may not distribute them
+#    without prior written consent from the author.
+#  - Attribution is required in all uses, UIs, documentation, and marketing:
+#      "Powered by AETHYR-GLOBAL (vΓ.2-ΔΣ OverMind Evolved), authored by Miloš M. Ilić."
+#  - Do not sublicense, resell, or distribute except as permitted.
+#  - Do not remove or obscure this notice or any copyright/attribution.
+#  - All intellectual property rights remain with the author.
+#  - Use of, or tampering with, the AETHYR-1 main node core is strictly prohibited.
+#  - Provided "as is" without warranty except as stated in the license.
+#  - See full license for payment, support, and liability terms.
+#
+#  Authorship confirmed by electronic signature:
+#      Електронски потписано, Miloš Ilić, 2313712377974001, 08.05.2025 07:40:20
+# =============================================================================
+
 import math
 import random
 import numpy as np
