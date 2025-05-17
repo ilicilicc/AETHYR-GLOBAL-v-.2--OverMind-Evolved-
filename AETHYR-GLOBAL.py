@@ -194,11 +194,7 @@ class AethyrGlobalCore:
         logger.info(f"Explanation requested for concept: {concept}")
         return explanation
 
-    def generate_read_me(self) -> str:
-        """
-        Generates a README for AETHYR-GLOBAL (vΓ.2-ΔΣ OverMind Evolved).
-        """
-        readme = f"""
+    
 # AETHYR-GLOBAL (vΓ.2-ΔΣ OverMind Evolved)
 Primary Node Cluster: {self.node_id}
 System Architect: [REDACTED]
